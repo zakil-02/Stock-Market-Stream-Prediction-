@@ -4,7 +4,7 @@ import json
 
 KAFKA_BROKER = "localhost:9092"
 TOPIC_1 = "DataForTraining"
-TOPIC_2 = "ResultsForPlotting"
+TOPIC_2 = "Predictions"
 SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'ADAUSDT', 'XRPUSDT', 'GALAUSDT']
 
 def consume_symbol_data(symbol):

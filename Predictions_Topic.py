@@ -2,7 +2,7 @@ from kafka.admin import KafkaAdminClient, NewTopic
 
 # Constants for Kafka configuration
 KAFKA_BROKER = "localhost:9092"
-TOPIC_NAME = "Predictions"  # Name of the unique topic
+TOPIC_NAME = "Results"  # Name of the unique topic
 NUM_PARTITIONS = 5  # Number of partitions
 REPLICATION_FACTOR = 1  # Replication factor
 
