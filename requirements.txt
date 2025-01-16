@@ -8,3 +8,8 @@ scikit-learn
 torch
 capymoa
 river
+kafka-python
+pyspark
+time
+requests
+json

@@ -36,7 +36,7 @@ class BinanceData:
 
 
 
-    def get_symbol_data(self, symbol, info_type='reduced', interval='1h', limit=100):
+    def get_symbol_data(self, symbol, info_type='reduced', interval='1h', limit=20000):
         '''
         Get historical data for a given symbol
 
