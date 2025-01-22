@@ -35,7 +35,7 @@ class BinanceData:
 
 
 
-    def get_symbol_data(self, symbol, info_type='reduced', interval='1h', limit=20000):
+    def get_symbol_data(self, symbol, info_type='reduced', interval='1D', limit=200000):
         '''
         Get historical data for a given symbol
 
@@ -71,6 +71,15 @@ class BinanceData:
 if __name__ == '__main__':
     print("keys: ", BINANCE_API_KEY, BINANCE_SECRET_KEY)
     bd = BinanceData()
-    bd.get_portfolio()
-    df = bd.get_symbol_data('BTCUSDT', info_type='reduced', interval='1h', limit=100)
-    print(df.head())
+    #bd.get_portfolio()
+    df_1 = bd.get_symbol_data('BTCUSDT', info_type='reduced', interval='1d', limit=200000)
+    df_2 = bd.get_symbol_data('ETHUSDT', info_type='reduced', interval='1d', limit=200000)
+    df_3 = bd.get_symbol_data('ADAUSDT', info_type='reduced', interval='1d', limit=200000)
+
+    #save to csv
+    df_1.to_csv('./Batch_Learning_notebooks/data/BTCUSDT.csv')
+    print("BTCUSDT.csv saved")
+    df_2.to_csv('./Batch_Learning_notebooks/data/ETHUSDT.csv')
+    print("ETHUSDT.csv saved")
+    df_3.to_csv('./Batch_Learning_notebooks/data/ADAUSDT.csv')
+    print("ADAUSDT.csv saved")

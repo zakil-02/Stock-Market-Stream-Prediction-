@@ -6,7 +6,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from streamingModels.streamingModels import PARegressor #here we must add other models
+from streamingModels.streamingModels import PARegressor, ARFRegressor, NNRegressor 
 
 KAFKA_BROKER = "localhost:9092"
 TOPIC_1 = "SymbolsData"
@@ -17,9 +17,9 @@ class ModelManager:
     def __init__(self):
         self.available_models = {
             1: ("Model 1 - PA Regressor", lambda: PARegressor()),
-            2: ("Model 2 - PA Regressor", lambda: PARegressor()),
-            3: ("Model 3 - PA Regressor", lambda: PARegressor()),
-            4: ("Model 4 - PA Regressor", lambda: PARegressor())
+            2: ("Model 2 - Adaptive RandomForest", lambda: ARFRegressor()),
+            3: ("Model 3 - NN Regressor", lambda: NNRegressor()),
+            4: ("Model 4 - Adaptive RandomForest", lambda: ARFRegressor())
         }
         self.active_models = {}
 
@@ -45,18 +45,20 @@ def create_kafka_producer():
         key_serializer=str.encode
     )
 
-def send_results(producer, symbol, predictions, metrics):
+def send_results(producer, symbol, predictions, real_value, metrics):
     """Send predictions and metrics to Kafka topic."""
     message = {
         "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         "symbol": symbol,
         "predictions": predictions,
+        "real_value": real_value,
         "metrics": metrics
     }
     try:
         producer.send(TOPIC_2, value=message, key=symbol)
         producer.flush()
         print(f"\nSent results for {symbol}:")
+        print(f"Real value: {real_value}")
         print(f"Predictions: {predictions}")
         print(f"Metrics: {metrics}")
     except Exception as e:
@@ -76,41 +78,46 @@ def process_symbol_data(symbol, models):
     producer = create_kafka_producer()
     print(f"\nStarting consumption for {symbol} using {len(models)} models")
     
+    last_real_value = None
+
     try:
         for message in consumer:
             if message.key == symbol:
                 instance = message.value
-                
-                # Prepare input data
-                X_new = {
-                    'start_time': datetime.fromtimestamp(instance['t'] / 1000).strftime('%d-%m-%Y %H:%M:%S'),
-                    'end_time': datetime.fromtimestamp(instance['T'] / 1000).strftime('%d-%m-%Y %H:%M:%S'),
-                    'open': instance['o'],
-                    'high': instance['h'],
-                    'low': instance['l'],
-                    'close': instance['c'],
-                    'volume': instance['v'],
-                    'n_trades': instance['n']
-                }
                 y_new = instance['c']
                 
-                # Process with each model
-                predictions = {}
-                metrics = {}
-                
-                for model_name, model in models.items():
-                    # Train the model
-                    model.learn_one(X_new, y_new)
+                if last_real_value is not None:
+                    # Prepare input data
+                    X_new = {
+                        'start_time': datetime.fromtimestamp(instance['t'] / 1000).strftime('%d-%m-%Y %H:%M:%S'),
+                        'end_time': datetime.fromtimestamp(instance['T'] / 1000).strftime('%d-%m-%Y %H:%M:%S'),
+                        'open': instance['o'],
+                        'high': instance['h'],
+                        'low': instance['l'],
+                        'close': instance['c'],
+                        'volume': instance['v'],
+                        'n_trades': instance['n']
+                    }
                     
-                    # Make prediction
-                    predictions[model_name] = float(model.predict_one(X_new))
                     
-                    # Get metrics
-                    metrics[model_name] = model.get_metrics()
+                    # Process with each model
+                    predictions = {}
+                    metrics = {}
+                    
+                    for model_name, model in models.items():
+                        # Train the model
+                        model.learn_one(X_new, y_new)
+                        
+                        # Make prediction
+                        predictions[model_name] = float(model.predict_one(X_new))
+                        
+                        # Get metrics
+                        metrics[model_name] = model.get_metrics()
                 
-                # Send results to Kafka
-                send_results(producer, symbol, predictions, metrics)
+                    # Send results to Kafka
+                    send_results(producer, symbol, predictions, last_real_value, metrics)
                 
+                last_real_value = y_new
     except KeyboardInterrupt:
         print("\nStopping consumption...")
     finally:
