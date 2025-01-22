@@ -6,7 +6,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from streamingModels.streamingModels import PARegressor, ARFRegressor, NNRegressor 
+from streamingModels.StreamRegressionModels import PARegressor, ARFRegressor, NNRegressor, HoeffdingTreeRegressor, BaggingRegressor
 
 KAFKA_BROKER = "localhost:9092"
 TOPIC_1 = "SymbolsData"
@@ -19,7 +19,8 @@ class ModelManager:
             1: ("Model 1 - PA Regressor", lambda: PARegressor()),
             2: ("Model 2 - Adaptive RandomForest", lambda: ARFRegressor()),
             3: ("Model 3 - NN Regressor", lambda: NNRegressor()),
-            4: ("Model 4 - Adaptive RandomForest", lambda: ARFRegressor())
+            4: ("Model 4 - Bagging Regressor", lambda: BaggingRegressor()),
+            5: ("Model 5 - HoeffdingTree Regressor", lambda: HoeffdingTreeRegressor()),
         }
         self.active_models = {}
 
