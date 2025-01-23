@@ -1,4 +1,4 @@
-from river import compose, linear_model, preprocessing, metrics, forest, neural_net as nn, optim, tree, ensemble
+from river import compose, linear_model, preprocessing, metrics, forest, neural_net as nn, optim, tree, ensemble, neighbors, time_series
 from datetime import datetime
 import numpy as np
 
@@ -13,6 +13,7 @@ class BaseRegressor:
         self.mae = metrics.MAE()
         self.rmse = metrics.RMSE()
         self.r2 = metrics.R2()
+        self.mape = metrics.MAPE()
 
     def _extract_features(self, X):
         open_price = float(X['open'])
@@ -69,12 +70,14 @@ class BaseRegressor:
             'MAE': self.mae.get(),
             'RMSE': self.rmse.get(),
             'R2': self.r2.get(),
+            'MAPE': self.mape.get()
         }
 
     def _update_metrics(self, y, pred):
         self.mae.update(y, pred)
         self.rmse.update(y, pred)
         self.r2.update(y, pred)
+        self.mape.update(y, pred)
 
 #-----------------------------------------------------------
 
@@ -93,6 +96,14 @@ class ARFRegressor(BaseRegressor):
         self.model = compose.Pipeline(
             ('scale', preprocessing.StandardScaler()),
             ('forest', forest.ARFRegressor(seed=42))
+        )
+
+class KNNRegressor(BaseRegressor):
+    def __init__(self):
+        super().__init__()
+        self.model = compose.Pipeline(
+            ('scale', preprocessing.StandardScaler()),
+            ('knn', neighbors.KNNRegressor())
         )
 
 

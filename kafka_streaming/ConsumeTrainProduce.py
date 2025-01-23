@@ -6,7 +6,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from streamingModels.StreamRegressionModels import PARegressor, ARFRegressor, NNRegressor, HoeffdingTreeRegressor, BaggingRegressor
+from streamingModels.StreamRegressionModels import PARegressor, ARFRegressor, NNRegressor, HoeffdingTreeRegressor, BaggingRegressor, KNNRegressor
 
 KAFKA_BROKER = "localhost:9092"
 TOPIC_1 = "SymbolsData"
@@ -20,7 +20,7 @@ class ModelManager:
             2: ("Model 2 - Adaptive RandomForest", lambda: ARFRegressor()),
             3: ("Model 3 - NN Regressor", lambda: NNRegressor()),
             4: ("Model 4 - Bagging Regressor", lambda: BaggingRegressor()),
-            5: ("Model 5 - HoeffdingTree Regressor", lambda: HoeffdingTreeRegressor()),
+            5: ("Model 5 - KNN Regressor", lambda: KNNRegressor()),
         }
         self.active_models = {}
 
@@ -79,7 +79,8 @@ def process_symbol_data(symbol, models):
     producer = create_kafka_producer()
     print(f"\nStarting consumption for {symbol} using {len(models)} models")
     
-    last_real_value = None
+    last_X = None
+    last_y = None
 
     try:
         for message in consumer:
@@ -87,38 +88,43 @@ def process_symbol_data(symbol, models):
                 instance = message.value
                 y_new = instance['c']
                 
-                if last_real_value is not None:
-                    # Prepare input data
-                    X_new = {
-                        'start_time': datetime.fromtimestamp(instance['t'] / 1000).strftime('%d-%m-%Y %H:%M:%S'),
-                        'end_time': datetime.fromtimestamp(instance['T'] / 1000).strftime('%d-%m-%Y %H:%M:%S'),
-                        'open': instance['o'],
-                        'high': instance['h'],
-                        'low': instance['l'],
-                        'close': instance['c'],
-                        'volume': instance['v'],
-                        'n_trades': instance['n']
-                    }
-                    
-                    
+                # Prepare input data for current iteration
+                X_new = {
+                    'start_time': datetime.fromtimestamp(instance['t'] / 1000).strftime('%d-%m-%Y %H:%M:%S'),
+                    'end_time': datetime.fromtimestamp(instance['T'] / 1000).strftime('%d-%m-%Y %H:%M:%S'),
+                    'open': instance['o'],
+                    'high': instance['h'],
+                    'low': instance['l'],
+                    'close': instance['c'],
+                    'volume': instance['v'],
+                    'n_trades': instance['n'], 
+                }
+                
+                # Only start prediction after we have a previous data point
+                if (last_X is not None) and (last_y is not None):
                     # Process with each model
                     predictions = {}
                     metrics = {}
                     
                     for model_name, model in models.items():
-                        # Train the model
-                        model.learn_one(X_new, y_new)
+                        # Learn with previous X and new y
+                        model.learn_one(last_X, y_new)
                         
-                        # Make prediction
+                        # Predict using current X
                         predictions[model_name] = float(model.predict_one(X_new))
-                        
-                        # Get metrics
+
+                        # Calculate metrics
                         metrics[model_name] = model.get_metrics()
-                
+
                     # Send results to Kafka
-                    send_results(producer, symbol, predictions, last_real_value, metrics)
+                    send_results(producer, symbol, predictions, y_new, metrics)
                 
-                last_real_value = y_new
+                # print(last_X)
+                # print(last_y)
+                # Update for next iteration
+                last_X = X_new
+                last_y = y_new
+
     except KeyboardInterrupt:
         print("\nStopping consumption...")
     finally:
