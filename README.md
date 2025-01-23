@@ -16,3 +16,20 @@ export BINANCE_API_KEY='your_api_key'
 export BINANCE_SECRET = 'your_secret'
 ```
 - You can then run the binance_data.py file to get the data from the binance API.
+
+
+
+-----
+
+In order to get the dashboard, you need to : 
+- Install kafka
+- run SymbolsData_Topic.py (create the 1st topic)
+- run Results_Topic.py (create 2nd topic)
+- run ProduceDara.py
+- run ConsumeTrainProduce.py
+
+  Then run this command : 
+```bash
+streamlit run Dashboard_streamlit.py
+```
+
