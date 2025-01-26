@@ -1,6 +1,5 @@
 # Real-Time Cryptocurrency Symbol Prediction Using Kafka
-![Dashboard Preview](cov.png)
-
+  <img src="https://static.vecteezy.com/system/resources/previews/013/257/156/non_2x/finance-and-business-background-bar-chart-and-candlestick-chart-show-stock-market-trading-price-vector.jpg" alt="Binance"/>
 ## Project Overview
 This project implements Real-Time Cryptocurrency Symbol Prediction Using Kafkan and stream learning techniques.
 
