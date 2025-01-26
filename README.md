@@ -1,5 +1,5 @@
 # Real-Time Cryptocurrency Symbol Prediction Using Kafka
-![Dashboard Preview](images/cov.png)
+![Dashboard Preview](cov.png)
 
 ## Project Overview
 This project implements Real-Time Cryptocurrency Symbol Prediction Using Kafkan and stream learning techniques.
@@ -79,7 +79,7 @@ This part is not included in the application workflow, it is implemented in jupy
 - Comparative analysis of different models
 
 ### Screenshot
-![Dashboard Preview](images/dash.png)
+![Dashboard Preview](dash.png)
 
 ## Running the Project
 
