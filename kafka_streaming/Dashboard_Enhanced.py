@@ -115,19 +115,19 @@ def create_price_plot(data, models, theme):
         x=data['timestamp'],
         y=data['real_value'],
         name='Real Price',
-        line=dict(color=theme['accent_2'], width=3),
+        line=dict(color=theme['accent_2'], width=2),
         mode='lines',
         hovertemplate='<b>Real Price</b><br>%{y:.4f}<extra></extra>'
     ))
     
-    # Add predicted prices with distinct colors
+    # Add predicted prices with distinct colors (solid lines, not dashed)
     for i, model in enumerate(models):
         model_display = model.replace('model_', 'Model ')
         fig.add_trace(go.Scatter(
             x=data['timestamp'],
             y=data[f'pred_{model}'],
             name=model_display,
-            line=dict(color=MODEL_COLORS[i % len(MODEL_COLORS)], width=2, dash='dot'),
+            line=dict(color=MODEL_COLORS[i % len(MODEL_COLORS)], width=1.5),
             mode='lines',
             hovertemplate=f'<b>{model_display}</b><br>%{{y:.4f}}<extra></extra>'
         ))
@@ -192,7 +192,7 @@ def create_metric_plot(data, models, metric, theme):
                 x=data['timestamp'],
                 y=data[metric_col],
                 name=model_display,
-                line=dict(color=MODEL_COLORS[i % len(MODEL_COLORS)], width=2.5),
+                line=dict(color=MODEL_COLORS[i % len(MODEL_COLORS)], width=1.8),
                 mode='lines',
                 fill='tozeroy',
                 fillcolor=f'rgba{tuple(list(int(MODEL_COLORS[i % len(MODEL_COLORS)][j:j+2], 16) for j in (1, 3, 5)) + [0.1])}',

@@ -107,16 +107,19 @@ def process_symbol_data(symbol, models):
                     metrics = {}
                     
                     for model_name, model in models.items():
-                        # Learn with previous X and new y
+                        # ONLINE LEARNING PROCESS:
+                        # 1. Learn from previous candle (last_X) using current close price (y_new) as target
+                        #    This teaches the model: "Given last_X features, the actual price was y_new"
                         model.learn_one(last_X, y_new)
                         
-                        # Predict using current X
+                        # 2. Predict next close price using current candle (X_new)
+                        #    This asks: "Given X_new features, what will the next price be?"
                         predictions[model_name] = float(model.predict_one(X_new))
 
-                        # Calculate metrics
+                        # Calculate metrics (comparing prediction with actual)
                         metrics[model_name] = model.get_metrics()
 
-                    # Send results to Kafka
+                    # Send results to Kafka for dashboard visualization
                     send_results(producer, symbol, predictions, y_new, metrics)
                 
                 # print(last_X)

@@ -54,7 +54,8 @@ class DemoDataGenerator:
     """Generates simulated cryptocurrency data for demo purposes"""
     
     def __init__(self):
-        self.base_price = 45000.0  # Starting BTC price
+        # Use realistic current BTC price (as of Feb 2026, around $95,000-100,000)
+        self.base_price = 97500.0  # Realistic BTC price
         self.time_start = datetime.now() - timedelta(minutes=100)
         self.data_points = []
         self.models = ['model_1', 'model_2', 'model_3']
@@ -143,19 +144,19 @@ def create_price_plot(data, models, theme):
         x=data['timestamp'],
         y=data['real_value'],
         name='Real Price',
-        line=dict(color=theme['accent_2'], width=3),
+        line=dict(color=theme['accent_2'], width=2),
         mode='lines',
         hovertemplate='<b>Real Price</b><br>$%{y:.2f}<extra></extra>'
     ))
     
-    # Add predicted prices with distinct colors
+    # Add predicted prices with distinct colors (solid lines, not dashed)
     for i, model in enumerate(models):
         model_display = model.replace('model_', 'Model ')
         fig.add_trace(go.Scatter(
             x=data['timestamp'],
             y=data[f'pred_{model}'],
             name=model_display,
-            line=dict(color=MODEL_COLORS[i % len(MODEL_COLORS)], width=2, dash='dot'),
+            line=dict(color=MODEL_COLORS[i % len(MODEL_COLORS)], width=1.5),
             mode='lines',
             hovertemplate=f'<b>{model_display}</b><br>$%{{y:.2f}}<extra></extra>'
         ))
@@ -227,7 +228,7 @@ def create_metric_plot(data, models, metric, theme):
                 x=data['timestamp'],
                 y=data[metric_col],
                 name=model_display,
-                line=dict(color=hex_color, width=2.5),
+                line=dict(color=hex_color, width=1.8),
                 mode='lines',
                 fill='tozeroy',
                 fillcolor=f'rgba({r},{g},{b},0.1)',
