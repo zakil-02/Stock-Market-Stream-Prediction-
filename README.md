@@ -1,7 +1,31 @@
-# Real-Time Cryptocurrency Symbol Prediction Using Kafka
-  <img src="https://static.vecteezy.com/system/resources/previews/013/257/156/non_2x/finance-and-business-background-bar-chart-and-candlestick-chart-show-stock-market-trading-price-vector.jpg" alt="Binance"/>
+# 📈 Real-Time Cryptocurrency Prediction System
+
+<img src="https://static.vecteezy.com/system/resources/previews/013/257/156/non_2x/finance-and-business-background-bar-chart-and-candlestick-chart-show-stock-market-trading-price-vector.jpg" alt="Crypto Trading"/>
+
+A modern, real-time cryptocurrency price prediction system using Kafka streaming and online machine learning algorithms.
+
+![Version](https://img.shields.io/badge/version-2.0-blue)
+![Python](https://img.shields.io/badge/Python-3.8+-orange)
+![Kafka](https://img.shields.io/badge/Kafka-Streaming-red)
+
+**Author:** Zakaria Akil
+
+---
+
+## ✨ Features
+
+- 🔄 **Real-Time Streaming** - Live cryptocurrency data from Binance WebSocket
+- 🤖 **Multiple ML Models** - 5 online learning algorithms running in parallel
+- 📊 **Modern Dashboard** - Beautiful dark/light theme with interactive charts
+- 📈 **Live Predictions** - Real-time price predictions with performance metrics
+- 🎯 **Model Comparison** - Compare MAE, RMSE, R², and MAPE across models
+- ⚡ **Kafka Integration** - Scalable streaming architecture
+- 🎨 **Enhanced UI** - Modern, responsive design with smooth animations
+
+---
+
 ## Project Overview
-This project implements Real-Time Cryptocurrency Symbol Prediction Using Kafkan and stream learning techniques.
+This project implements Real-Time Cryptocurrency Symbol Prediction Using Kafka and stream learning techniques.
 
 ## Prerequisites
 - Python 3.8+
@@ -78,7 +102,18 @@ This part is not included in the application workflow, it is implemented in jupy
 - Comparative analysis of different models
 
 ### Screenshot
+
+**Enhanced Dashboard (v2.0)**
 ![Dashboard Preview](dash.png)
+
+**Features:**
+- Real-time price tracking with live updates
+- Multiple model predictions displayed simultaneously
+- Interactive charts with hover details
+- Performance metrics visualization (MAE, RMSE, R², MAPE)
+- Dark/Light theme support
+- Gradient-filled metric charts
+- Modern card-based layout
 
 ## Running the Project
 
@@ -102,9 +137,28 @@ python ConsumeTrainProduce.py
 ```
 
 ### Launch Dashboard
+
+**Option 1: Enhanced Dashboard (Recommended)**
 ```bash
-streamlit run Dashboard_streamlit.py
+cd kafka_streaming
+./run_dashboard.sh
+# Or directly:
+streamlit run Dashboard_Enhanced.py
 ```
+
+**Option 2: Original Dashboard**
+```bash
+cd kafka_streaming
+streamlit run Dashboard_Streamlit.py
+```
+
+The enhanced dashboard features:
+- Modern dark/light theme toggle
+- Improved visualizations with gradient fills
+- Better metric cards and layouts
+- Smooth animations and transitions
+- Enhanced color schemes
+- Responsive design
 
 ## Performance Metrics
 - Mean Absolute Error (MAE)
@@ -126,4 +180,26 @@ streamlit run Dashboard_streamlit.py
 - Implement more advanced streaming models
 - Enhanced feature engineering during the online learning
 - Tracking price predictions for multiple symbols at a time
+- Add model performance comparison table
+- Implement alert system for significant price changes
+- Add historical data replay feature
+- Export predictions and metrics to CSV
+
+---
+
+## 📝 License
+
+MIT License - feel free to use and modify!
+
+---
+
+## 👤 Author
+
+**Zakaria Akil**
+- GitHub: [@zakil-02](https://github.com/zakil-02)
+- Email: zakaria.akil.2002@gmail.com
+
+---
+
+**Happy Trading! 📈**
 
